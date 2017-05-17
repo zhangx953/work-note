@@ -1,0 +1,52 @@
+        实用命令大全
+1.维修模式下挂载根为读写命令（默认为只读）：mount -o remount,rw /
+
+2.查看dd进度命令：watch -n 5 killall -USR1 dd
+
+3.LVM管理：
+	首先使用fdisk /dev/sda命令对硬盘进行分区，并更改分区类型为8e(LVM 类型)。
+	创建物理卷：pvcreate /dev/sda1 /dev/sda2
+	创建卷组：vgcreate vg_name /dev/sda1 /dev/sda2
+	向卷组添加分区：vgextend vg_name /dev/sdb3
+	从卷组删除分区：vgreduce vg_name /dev/sdb3
+	创建逻辑卷：lvcreate -L 100G -n lv_name vg_name命令
+	查看物理卷状态：pvs
+	查看逻辑卷状态：lvs
+	查看卷组状态：vgs
+
+4.Git管理：
+	仓库初始化：git init
+	添加入缓冲区：git add xxxxx.xxx
+	提交缓冲区：git commit -m "memo"
+	返回到以前版本：git reset --hard XXXXXXX
+	查看提交日志：git log
+							  git reflog
+  本地仓库与github远程仓库建立关联：git remote add origin git@github.com:zhangx953/XXX.git
+	本地仓库内容推送到github远程仓库：git push -u origin master
+	github下载仓库：git clone git@github.com:zhangx953/XXX.git
+	推送仓库到github: git push origin master
+
+5.设置时区：
+	cp -f /usr/share/zoneinfo/Asia/Shanghai /etc/localtime
+
+6.ssh免密码登录：
+	① 在A主机上修改/etc/ssh/sshd_config,找到如下行，去掉“#”：
+		RSAAuthentication yes
+ 		PubkeyAuthentication yes
+ 		AuthorizedKeysFile  .ssh/authorized_keys
+	② 重启sshd服务：
+		sudo service sshd restart
+	③ 本机生成公钥和私钥：
+		ssh-keygen -t rsa
+		注：.ssh/id_rsa :私钥
+		    .ssh/id_rsa.pub : 公钥
+	④ 导入公钥到认证文件中
+		cat ~/.ssh/id_rsa.pub >> ~/.ssh/authorized_keys(本机测试用，其它主机方法相同)
+		ssh localhost (测试本机是否正常)
+		scp ~/.ssh/id_rsa.pub root@目标主机IP:/home/id_rsa.pub
+		在其它主机中
+		cat /home/id_rsa.pub >> ~/.sshll
+	⑤ 更改相关文件权限：
+		chmod 700 ~/.ssh
+		chmod 600 ~/.ssh/authorized_keys
+	
